@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using TomHeijmans.BCWebinar.API.AppService.Models;
+using TomHeijmans.BCWebinar.Models;
 
 namespace TomHeijmans.BCWebinar.API.AppService.Services
 {

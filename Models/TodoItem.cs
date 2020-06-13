@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace TomHeijmans.BCWebinar.API.AppService.Models
+namespace TomHeijmans.BCWebinar.Models
 {
     public class TodoItem
     {

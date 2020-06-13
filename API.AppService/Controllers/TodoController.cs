@@ -3,8 +3,8 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TomHeijmans.BCWebinar.API.AppService.Models;
 using TomHeijmans.BCWebinar.API.AppService.Services;
+using TomHeijmans.BCWebinar.Models;
 
 namespace TomHeijmans.BCWebinar.API.AppService.Controllers
 {
