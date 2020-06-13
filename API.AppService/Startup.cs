@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.Cosmos.Fluent;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -22,7 +24,8 @@ namespace API.AppService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddSingleton<ITodoService>(InitializeCosmosClientInstanceAsync(Configuration.GetSection("CosmosDb")).GetAwaiter().GetResult());
+
+            services.AddSingleton<ITodoService>(InitializeCosmosClientInstance().GetAwaiter().GetResult());
 
 
             // Register the Swagger generator, defining 1 or more Swagger documents
@@ -67,18 +70,19 @@ namespace API.AppService
         /// Creates a Cosmos DB database and a container with the specified partition key. 
         /// </summary>
         /// <returns></returns>
-        private static async Task<TodoService> InitializeCosmosClientInstanceAsync(IConfigurationSection configurationSection)
+        private async Task<TodoService> InitializeCosmosClientInstance()
         {
-            string databaseName = configurationSection.GetSection("DatabaseName").Value;
-            string containerName = configurationSection.GetSection("ContainerName").Value;
-            string account = configurationSection.GetSection("Account").Value;
-            string key = configurationSection.GetSection("Key").Value;
-            Microsoft.Azure.Cosmos.Fluent.CosmosClientBuilder clientBuilder = new Microsoft.Azure.Cosmos.Fluent.CosmosClientBuilder(account, key);
-            Microsoft.Azure.Cosmos.CosmosClient client = clientBuilder
+            string databaseName = Configuration["CosmosDb:DatabaseName"];
+            string containerName = Configuration["CosmosDb:ContainerName"];
+            string account = Configuration["CosmosDb:Account"];
+            string key = Configuration["cosmos-key"];
+
+            CosmosClientBuilder clientBuilder = new CosmosClientBuilder(account, key);
+            CosmosClient client = clientBuilder
                                 .WithConnectionModeDirect()
                                 .Build();
             TodoService cosmosDbService = new TodoService(client, databaseName, containerName);
-            Microsoft.Azure.Cosmos.DatabaseResponse database = await client.CreateDatabaseIfNotExistsAsync(databaseName);
+            DatabaseResponse database = await client.CreateDatabaseIfNotExistsAsync(databaseName);
             await database.Database.CreateContainerIfNotExistsAsync(containerName, "/id");
 
             return cosmosDbService;
